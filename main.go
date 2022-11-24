@@ -57,6 +57,30 @@ func InitScreen {
 
 }
 
+func UpdateState() {
+	if isGamePaused{
+		return
+	}
+	for i := range gameObjects {
+		gameObjects[i].row += gameObjects[i].velRow
+		gameObjects[i].col += gameObjects[i].velCol
+	}
+}
+
+func DrawState() {
+	if isGamePaused {
+		return
+	}
+
+	screen.Clear()
+	PrintString(0, 0, debugLog)
+	
+	for _,obj := range gameObjects {
+		PrintFilledReact(obj.row, obj.col, obj.width, obj.height, obj.symbol)
+}
+	screen.Show()
+}
+
 func InitGameState() {
 	gameObjects = []*GameObject{}
 }
@@ -82,4 +106,36 @@ func InitUserInput() chan string{
 
 		return inputChan
 
+}
+
+func Readinput(inputChan chan string) string{
+	var key string
+	select {
+	case key = <-inputChan:
+	default:
+		key = ""
+	}
+
+	return key
+
+}
+
+func PrintStringCentered(row, col int, str string) {
+	col = col - len(str)/2
+	PrintString(row, col, str)
+}
+
+func PrintString(row, col int, str string) {
+	for _,c := range str {
+		PrintFilledReact(row, col, 1, 1, c)
+		col += 1
+	}
+}
+
+func PrintFilledReact(row, col, width, height int, ch rune){
+	for r := 0; r < height; r++{
+		for c := 0; c < width; c++ {
+			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
+		}
+	}
 }
