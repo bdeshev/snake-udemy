@@ -119,3 +119,23 @@ func Readinput(inputChan chan string) string{
 	return key
 
 }
+
+func PrintStringCentered(row, col int, str string) {
+	col = col - len(str)/2
+	PrintString(row, col, str)
+}
+
+func PrintString(row, col int, str string) {
+	for _,c := range str {
+		PrintFilledReact(row, col, 1, 1, c)
+		col += 1
+	}
+}
+
+func PrintFilledReact(row, col, width, height int, ch rune){
+	for r := 0; r < height; r++{
+		for c := 0; c < width; c++ {
+			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
+		}
+	}
+}
