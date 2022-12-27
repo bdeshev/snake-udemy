@@ -74,9 +74,10 @@ func DrawState() {
 
 	screen.Clear()
 	PrintString(0, 0, debugLog)
+	PrintGameFrame()
 	
 	for _,obj := range gameObjects {
-		PrintFilledReact(obj.row, obj.col, obj.width, obj.height, obj.symbol)
+		PrintFilledRect(obj.row, obj.col, obj.width, obj.height, obj.symbol)
 }
 	screen.Show()
 }
@@ -120,6 +121,14 @@ func Readinput(inputChan chan string) string{
 
 }
 
+func PrintGameFrame(){
+	screenWidth, screenHeight := screen.Size()
+	row,col := screenHeight/2 - GameFrameHeight/2 - 1, screenWidth/2 - GameFrameWidth/2 - 1 
+	width, jeight := GameFrameWidth+2, GameFrameHeight+2
+
+	PrintUnfilledRect(row, col, width, height, GameFrameSymbol)
+}
+
 func PrintStringCentered(row, col int, str string) {
 	col = col - len(str)/2
 	PrintString(row, col, str)
@@ -127,15 +136,30 @@ func PrintStringCentered(row, col int, str string) {
 
 func PrintString(row, col int, str string) {
 	for _,c := range str {
-		PrintFilledReact(row, col, 1, 1, c)
+		PrintFilledRect(row, col, 1, 1, c)
 		col += 1
 	}
 }
 
-func PrintFilledReact(row, col, width, height int, ch rune){
+func PrintFilledRect(row, col, width, height int, ch rune){
 	for r := 0; r < height; r++{
 		for c := 0; c < width; c++ {
 			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
 		}
+	}
+}
+
+func PrintUnfiledRect(row,col,width,height int, ch rune){
+	for c := 0; c < width; c++{
+		screen.SetContent(col+c, row, ch, nil, tcell.StyleDefault)
+	}
+	
+	for c := 0; c < width; c++{
+		screen.SetContent(col+c, row+height-1, ch, nil, tcell.StyleDefault)
+	}
+
+	for c := 0; c < width; c++{
+		screen.SetContent(col, row, ch, nil, tcell.StyleDefault)
+		screen.SetContent(col+width-1, row, ch, nil, tcell.StyleDefault)
 	}
 }
